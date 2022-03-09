@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Gamedev Canvas Workshop</title>
+  <style>
+    * { padding: 0; margin: 0; }
+    canvas { background: #eee; display: block; margin: 0 auto; }
+  </style>
+</head>
+<body>
+  <canvas id="myCanvas" width="480" height="320"></canvas>
+
+  <script>
+    var canvas = document.getElementById("myCanvas");
+    // id가 myCanvas인 값을 canvas에 담는다
+    var ctx = canvas.getContext("2d");
+    // canvas의 2d라는 것을 사용할 값으로 ctx에 담는다
+
+
+    // ctx.beginPath(); // ctx의  beginPath()함수 호출 => 시작하는 path
+
+    // ctx.rect(20, 40, 50, 50); // ctx의 rect()함수 호출 => 직사각형 정의
+    // // ctx.rect(x, y, w, h)
+    // // 처음 두값(20, 40)은 직사각형의 왼쪽 상단 모서리 좌표 
+    // // 나중 두값(50, 50)은 직사각형의 너비와 높이
+    // // 왼쪽 20픽셀, 위쪽 40픽셀, 너비 50픽셀, 높이 50픽셀 
+
+    // ctx.arc(240, 160, 20, 0, Math.PI*2, false); // ctx의 arc()함수 호출 => 원 정의
+    // // ctx.arc(x, y, 반지름, 원의 시작점, 끝점의각도, 원을 그릴때의 반시계방향으로 그릴지 여부)
+    // // (240, 160, 20, 0, Math.PI*2, false)
+    // // 왼쪽으로 240픽셀, 위에서부터 160픽셀, 반지름 20픽셀, 0의값부터 시작. Math.PI[파이-원주율]*2 => 360도, 시계방향으로 돈다
+    // // Math.PI*2는 원주율을 의미, degree로 표현 하지 않는다.
+    // // true 일땐 반시계 방향으로 돈다. false일때 생략가능
+    // ctx.fillStyle = "#FF0000"; // ctx의 사각형을 채워줄 색깔 정의
+
+    // ctx.fill(); // ctx의 정의한 색깔을 채우는 함수 fill() 호출
+
+    // ctx.closePath(); // ctx의  closePath()함수 호출 => 끝나는 path
+
+
+    var x = canvas.width / 2; // canvas의 width값의 50%의 값을 x에 담는다
+    var y = canvas.height - 30; // canvas의 height값의 -30px의 값을 y에 담는다
+
+    var dx = 2; // 다 그려진후 2만큼 x를 옮길 값을 dx에 담는다.
+    var dy = -2; // 다 그려진후 -2만큼 y를 옮길 값을 dy에 담는다.
+
+    var ballRadius = 10; // 원의 반지름
+
+
+    // // draw 함수 정의
+    // function draw() {
+
+    //   // 각가의 원을 그리기 전에 캔버스 지우기
+    //   ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //   // ctx.clearRect(왼쪽상단x, 왼쪽상단y, 오른쪽하단x, 오른쪽하단y)
+    //   // 0,0에서부터 480,320까지 그려진 사각형으로 덮인 전체 영역에서 이전에 칠해진 모든 내용이 지워라
+
+    //   // drawing code
+    //   ctx.beginPath(); // 그리기 시작
+    //   // ctx.arc(50, 50, 10, 0, Math.PI*2); // 왼쪽에서 50, 위에서 50에서 시작하는 반지름 10인 원을 0도부터 360도까지 시계방향으로 그려라
+    //   ctx.arc(x, y, 10, 0, Math.PI*2); // 왼쪽에서 x 만큼, 위에서 y만큼 반지름 10픽셀인 원을 0도 부터 360도까지 시계방향으로 그려라
+    //   ctx.fillStyle = "#0095DD"; // 원의 채울 컬러값은 #0095DD
+    //   ctx.fill(); // 설정한 컬러값을 채워라
+    //   ctx.closePath(); // 그리기 끝
+
+    //   // 원 그린후 좌표 옮기기
+    //   x += dx; // x에 dx를 추가하여 다시 x에 담는다
+    //   y += dy; // y에 dy를 추가하여 다시 y에 담는다
+    // }
+
+    var ballColor = '#f00000'; // ballColor라는 변수에 색을 담는다
+
+    // 튕길 paddlebar 만들기
+    var paddleHeight = 10; // bar의 높이는 10  픽셀
+    var paddleWidth = 75; // bar의 넓이는 75픽셀
+    var paddleX = (canvas.width - paddleWidth) / 2;  
+    // 캔버스의 너비값에서 bar의 너비값을 뺀것의 50%를 paddleX라는 변수에 담는다. (bar의 x축의 시작점, 왼쪽으로부터 얼마나 떨어져 있는지)
+
+    // 버튼 누르는 것을 boolean값으로 오는 변수로 선언
+    // 처음은 누른게 없으므로 둘다 false 설정
+    var rightPressed = false; 
+    var leftPressed = false;
+  
+
+    // 벽돌 그리기
+    var brickRowCount = 3; // 벽돌의 가로 갯수 3
+    var brickColumnCount = 5; // 벽돌의 세로 갯수 5
+    var brickWidth = 75; // 하나의 벽돌의 가로 길이 75픽셀
+    var brickHeight = 20; // 하나의 벽돌의 높이 값 20픽셀
+    var brickPadding = 10; // 하나의 벽돌의 패딩값 상하좌우 10픽셀 -> 각각의 벽돌끼리 부딪히지 않기 위해 
+    var brickOffsetTop = 30; // 하나의 벽돌의 top 위치값 30 픽셀 -> 캔버스와 벽돌사이의 top시작점
+    var brickOffsetLeft = 30; // 하나의 벽돌의 left 위치값 30픽셀 -> 캔버스와 벽돌사이의 left시작점
+
+    var bricks = [];  // bricks 배열 선언 => 2차원 배열
+    // for(var c=0; c<brickColumnCount; c++) { 
+    //   // 반복문을 돌려라
+    //   // c는 0 이고 c가 brickColumnCount(5)보다 작을때까지 반복해라
+  
+    //     bricks[c] = [];
+    //     // bricks[c]는 배열 
+    //     // bricks[0, 1, 2]은 bricks[[], [], []]이런 형식???
+
+    //     for(var r=0; r<brickRowCount; r++) {
+    //       // 반복문을 돌려라
+    //       // r은 0 이고 r이 brickColumnCount(5)보다 작을때까지 반복해라
+
+    //         // bricks[c][r] = { x: 0, y: 0 }; 
+    //         // 이차원 배열 bricks[[c][r]] => bricks[{x: 0, y: 0 }]??
+
+    //         bricks[c][r] = { x: 0, y: 0, status: 1 };
+    //         // 벽돌의 없애기 위한 조건 추가
+    //         // status: 1
+    //     }
+    // }
+
+    var random;
+    var randomNum;
+
+    for(var c=0; c<brickColumnCount; c++) {
+        bricks[c] = [];
+        random = Math.random()*3; // 렌덤수
+        randomNum = Math.ceil(random); // 올림
+        for(var r=0; r<brickRowCount; r++) {
+          bricks[c][r] = { x: 0, y: 0, status: randomNum };
+          console.log(random)
+        }
+    }
+
+    // 스코어
+    var score = 0;
+
+    var lives = 3; //남은 생명 수
+
+    document.addEventListener("keydown", keyDownHandler, false); // keydown 이벤트 발생시 keyDownHandler실행 
+    document.addEventListener("keyup", keyUpHandler, false);  // keyup 이벤트 발생시 keyUpHandler실행 
+
+    document.addEventListener("mousemove", mouseMoveHandler, false); // 마우스 이벤트 발생시 mousemove 실행
+
+    function keyDownHandler(e) { // keyDown 될때
+        if(e.keyCode == 39) { // 오른쪽키
+            rightPressed = true;
+        }
+        else if(e.keyCode == 37) { // 왼쪽키
+            leftPressed = true;
+        }
+    }
+
+    function keyUpHandler(e) { // keyup 될때
+        if(e.keyCode == 39) { // 오른쪽키
+            rightPressed = false;
+        }
+        else if(e.keyCode == 37) { // 왼쪽키
+            leftPressed = false;
+        }
+    }
+
+    function mouseMoveHandler(e) { // 마우스가 움직일때
+        var relativeX = e.clientX - canvas.offsetLeft;
+        // e.clientX(현제 마우스의 x값)- 캔버스의 왼쪽으로부터의 값(canvas.offsetLeft)을 relativeX에 담는다
+
+        if(relativeX > 0 && relativeX < canvas.width) {
+          // relativeX는 0보다 크고 relativeX은 canvas.width값보다 작다
+            paddleX = relativeX - paddleWidth/2;
+            //relativeX에서 (paddleWidth/2)패들의 너비/ 2를 뺀 값을 paddleX(패들의 x값으로 )사용한다.
+        }
+    } 
+
+    // 충돌 방지
+    function collisionDetection() {
+      for(var c=0; c<brickColumnCount; c++) {
+       // 반복문 돌려라
+        // c는 0 이고 c가 brickColumnCount(5)보다 작을때까지 반복해라
+
+        for(var r=0; r<brickRowCount; r++) {
+          // 반복문을 돌려라
+          // r은 0 이고 r이 brickColumnCount(5)보다 작을때까지 반복해라
+
+            var b = bricks[c][r];
+            // bricks[c][r]를 b 에 담는다
+
+            // if(b.status == 1) {
+            //   // b의 status가 1일 때 작동
+
+            //   if(x > b.x && x < b.x+brickWidth && y > b.y && y < b.y+brickHeight) {
+            //     // 공의 x 좌표는 벽돌의 x 좌표보다 커야 한다. => x > b.x
+            //     // 공의 x 좌표는 벽돌의 x 좌표 + 가로 길이보다 작아야 한다. => x < b.x+brickWidth
+            //     // 공의 y 좌표는 벽돌의 y 좌표보다 커야 한다. => y > b.y
+            //     // 공의 y 좌표는 벽돌의 y 좌표 + 높이보다 작아야 한다. => y < b.y+brickHeight
+            //     // 4가지 모두 참일때 실행
+
+            //       dy = -dy; // 상하로 옮기는 값
+            //       b.status = 0 // bricks[c][r]의 상태값을 0으로 바꿔준다
+
+            //       ballColor = "#" + Math.round(Math.random() * 0xffffff).toString(16);
+            //       // 벽에 부딪힐때마다 렌덤 컬러값을 부여
+
+            //       // score++; // 스코어 증가
+            //       score = score + 10; // 스코어 점수 10씩 증가
+
+            //       // if(score == brickRowCount*brickColumnCount) { 
+            //       //   // 만약 스코어가  벽돌의 가로 갯수* 벽돌의 세로 갯수와 같으면
+            //       //     alert("YOU WIN, CONGRATULATIONS!");
+            //       //     // 너가 이겼어 축하해 라는 얼럿창을 띄워라
+            //       //     document.location.reload();
+            //       //     // 그리고 다시 로드해라
+            //       // }
+            //   }
+            // }
+            
+            if(b.status > 0) {
+              if(x > b.x && x < b.x+brickWidth && y > b.y && y < b.y+brickHeight) {
+                  dy = -dy;
+                  b.status = b.status -1;
+                  ballColor = "#" + Math.round(Math.random() * 0xffffff).toString(16);
+
+                  score = score + 10;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // 스코어 작성
+    function drawScore() {
+      ctx.font = "16px Arial";  // 사각형에 폰트 정의
+      ctx.fillStyle = "#0095DD"; // 폰트 컬러 정의
+      ctx.fillText("Score: "+score, 8, 20); // 텍스트 정의
+    }
+
+    // 생명수 표시
+    function drawLives() {
+      ctx.font = "16px Arial"; // 사각형에 폰트 정의
+      ctx.fillStyle = "#0095DD"; // 폰트 컬러 정의
+      ctx.fillText("Lives: "+lives, canvas.width-65, 20); // 텍스트 정의
+    }
+
+    // 원 그리기
+    function drawBall() {
+      ctx.beginPath();
+      ctx.arc(x, y, ballRadius, 0, Math.PI*2);
+    //   ctx.fillStyle = "#0095DD";
+      ctx.fillStyle = ballColor; // 컬러값 대신 ballColor 변수를 담는다.
+      ctx.fill();
+      ctx.closePath();
+    }
+
+    // paddle bar 그리기
+    function drawPaddle() {
+      ctx.beginPath(); // 그리기 시작 알림
+      ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
+      // 사각형을 그려라 함수 실행
+      // (paddleX, canvas.height - paddleHeight)에 사각형의 왼쪽 상단 모서리가 위치
+      // (paddleWidth, paddleHeight)에 사각형 오른쪽 하단 모서리가 위치
+
+      ctx.fillStyle = "#0095DD"; // #0095DD값을 fillstyle로 갖는다
+      ctx.fill(); // fillstyle로 채워라 함수
+      ctx.closePath(); // 그리기 끝 알림
+    }
+
+    // 벽돌 그리기 
+    function drawBricks() {
+      for(var c=0; c<brickColumnCount; c++) {
+        // 반복문 돌려라
+        // c는 0 이고 c가 brickColumnCount(5)보다 작을때까지 반복해라
+
+        for(var r=0; r<brickRowCount; r++) {
+          // 반복문을 돌려라
+          // r은 0 이고 r이 brickColumnCount(5)보다 작을때까지 반복해라
+
+          // if(bricks[c][r].status == 1) {
+          //   // bricks[c][r]의 status 가 1이면 그리고 0이면 그리지 않는다
+      
+          //   var brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
+          //     // (brickWidth:벽돌widht값 +brickPadding: 벽돌의 패딩값) * c + 벽돌의 left 시작점을 brickX에 담아라
+
+          //     var brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
+          //     // (brickHeight:벽돌Height값 +brickPadding: 벽돌의 패딩값) * c + 벽돌의 top 시작점을 brickY에 담아라
+
+          //     bricks[c][r].x = brickX;
+          //     // bricks[c][r]의 x 값은 brickX;
+
+          //     bricks[c][r].y = brickY;
+          //     // bricks[c][r]의 y값은 brickY;
+
+          //     ctx.beginPath(); // 그리기 시작
+          //     ctx.rect(brickX, brickY, brickWidth, brickHeight); 
+          //     // (brickX, brickY)위치에서 가로brickWidth, 세로brickHeight 인 사각형을 그려라
+
+          //     ctx.fillStyle = "#0095DD";
+          //     // #0095DD 색 정의
+          //     ctx.fill(); // 정의된 색을 채워라
+
+          //     ctx.closePath(); // 그리기 끝
+          // }
+
+          if(bricks[c][r].status == 1) {
+            var brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
+            var brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
+            bricks[c][r].x = brickX;
+            bricks[c][r].y = brickY;
+            ctx.beginPath();
+            ctx.rect(brickX, brickY, brickWidth, brickHeight);
+            ctx.fillStyle = "#00ffff";
+            ctx.fill();
+            ctx.closePath();
+          }
+          if(bricks[c][r].status == 2) {
+            var brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
+            var brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
+            bricks[c][r].x = brickX;
+            bricks[c][r].y = brickY;
+            ctx.beginPath();
+            ctx.rect(brickX, brickY, brickWidth, brickHeight);
+            ctx.fillStyle = "#ff00ff";
+            ctx.fill();
+            ctx.closePath();
+          }
+          if(bricks[c][r].status == 3) {
+            var brickX = (c*(brickWidth+brickPadding))+brickOffsetLeft;
+            var brickY = (r*(brickHeight+brickPadding))+brickOffsetTop;
+            bricks[c][r].x = brickX;
+            bricks[c][r].y = brickY;
+            ctx.beginPath();
+            ctx.rect(brickX, brickY, brickWidth, brickHeight);
+            ctx.fillStyle = "#ffff00";
+            ctx.fill();
+            ctx.closePath();
+          }
+        }
+      } 
+    }
+
+    
+    // 원 지우고 그리고 옮기고 함수
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // 원 지우기
+        
+        drawBricks(); // 벽돌 그리기 호출 
+
+        drawBall(); // 원 그리기 호출
+
+        drawPaddle(); // 패들바 그리기 호출
+
+        drawScore(); // 스코어 그리기 호출
+
+        drawLives(); // 생명수 그리기 호출
+
+        collisionDetection(); // 충돌감지 호출
+        
+        // 좌우로 튕기기
+        if(x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+          // 만약 x + dx가  canvas.width - ballRadius(480 - 10) => 캔버스너비값-원의 반지름보다 크거나
+          // x + dx가 원의 반지름보다 작으면 동작해라 (벽이 충돌하는것은 공이기 때문에 x + dx < 0 이 아닌 ballRadius을 기준으로 잡는다)
+          dx = -dx;
+          // dx가 음수이면 양수로, 양수이면 음수로 바꿔줘라
+
+          ballColor = "#0095DD"; // 좌우로 부딪힐때 컬러값 지정
+        }
+
+        // 상하로 튕기기
+        // if(y + dy > canvas.height - ballRadius || y + dy < ballRadius) {
+        //   // 만약 y + dy가  canvas.height - ballRadius(320 - 10) => 캔버스높이값-원의 반지름보다 크거나
+        //   // y + dy가 원의 반지름보다 작으면 동작해라
+        //   dy = -dy;
+        //   // dy가 음수이면 양수로, 양수이면 음수로 바꿔줘라
+
+        //   ballColor = "#FF95DD"; // 상하로 부딪힐때 컬러값 지정
+        // }
+        if(y + dy < ballRadius) { // 만약 y + dy가 원의 반지름보다 작으면 동작해라
+            dy = -dy; // dy가 음수이면 양수로, 양수이면 음수로 바꿔줘라
+        
+        // } else if(y + dy > canvas.height-ballRadius) { //만약 y + dy가  canvas.height - ballRadius(320 - 10) => 캔버스높이값-원의 반지름보다 크면 동작해라
+        //     alert("GAME OVER"); // GAME OVER라는 경고창 띄우고 
+        //     document.location.reload(); // 재로딩시켜라
+        // }
+        } else if(y + dy > canvas.height-ballRadius) {
+          //만약 y + dy가  canvas.height - ballRadius(320 - 10) => 캔버스높이값-원의 반지름보다 크면 동작해라
+        
+          if(x > paddleX && x < paddleX + paddleWidth) {
+            // 만약 공의 시작점(x)가 패들의 왼쪽 좌표값(paddleX)보다 크면서
+            // 공의 시작점(x)가 패들의 왼쪽 좌표값(paddleX)+ 패들의너비 보다 작으면 동작해라
+
+              dy = -dy; // dy가 음수이면 양수로, 양수이면 음수로 바꿔줘라
+          }
+          else { // 아닐 경우
+              // alert("GAME OVER"); // GAME OVER라는 경고창 띄우고 
+              // alert(score); // 게임 스코어를 경고창에 띄우기
+              // clearInterval(drawInterval); // drawInterval를 지운다
+              // document.location.reload(); // 재로딩시켜라
+
+              lives--; // 생명이 하나씩 작아짐
+              if(!lives) { // 생명이 없으면 실행
+                  alert("GAME OVER");  // GAME OVER라는 경고창 띄우고 
+                  // clearInterval(interval); // drawInterval를 지운다 - setInterval 사용 안할시 삭제
+                  document.location.reload(); //재로딩시켜라 
+              }
+              else { // 그 외의  생명이 남아 있으면 패들을 다시 그리고 재시작
+                  x = canvas.width/2; 
+                  y = canvas.height-30;
+                  dx = 2;
+                  dy = -2;
+                  paddleX = (canvas.width-paddleWidth)/2;
+              }
+          }
+        }
+
+        // 패들 움직이기
+        if(rightPressed && paddleX < canvas.width-paddleWidth) {
+          // 오른쪽 키를 누르면서 패들바의 왼쪽 좌표가 canvas.width-paddleWidth보다 작을때 실행
+            paddleX += 7; // 패들바의 왼쪽 좌표에 7를 더해라
+        }
+        else if(leftPressed && paddleX > 0) {
+           // 왼쪽 키를 누르면서 패들바의 왼쪽 좌표가 0보다 클때 실행
+            paddleX -= 7; // 패들바의 왼쪽 좌표에 7를 빼라
+        }
+
+
+        x += dx;
+        y += dy;
+        requestAnimationFrame(draw); // setInterval 보다 효율적이고 부드럽게 반복 한다.
+    }
+    // target.addEventListener(type, listener(함수), options/useCapture);
+    // type은 이벤트 할유형 (click, keyup, keydown, ...)
+    // listener는 콜백함수, EventListener인터페이스를 구현하는 객체..?
+    // options의 종류는 capture(이게 먼저 발동하게하는거), once(최대한번), passive(ture일 경우 preventDefault() 절대 호출 안함), signal( abort() 메서드를 호출후 이벤트 제거)
+    // useCapture은 ???
+   
+    // var drawInterval = setInterval(draw, 10); 
+    // draw를 10밀리초마다 무한 반복하는 것을 drawInterval에 담아라
+
+    draw(); // draw 호출
+  </script>
+</body>
+</html>
