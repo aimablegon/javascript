@@ -7,6 +7,7 @@ var game = new Phaser.Game(480, 320, Phaser.CANVAS, null, {
   preload: preload, create: create, update: update
 });
 
+var ball; // ball 변수 선언
 
 // 시작전 로드
 function preload() {
@@ -23,13 +24,20 @@ function preload() {
   game.scale.pageAlignVertically = true;
    // pageAlignVertically= ture 일 때, 상위 컨테이너에서 수직으로 정렬
 
-  game.stage.backgroundColor = '#eee'
+  game.stage.backgroundColor = '#eee';
   // canvas의 백그라운드 컬러값을 eee로 바꾼다
+
+  game.load.image('ball', 'img/ball.png');
+  // image 로드
 
 }
 
 // 로드 후 생성(한번 실행)
-function create() {}
+function create() {
+  ball = game.add.sprite(50, 50, 'ball');
+  // sprite(x좌표, y좌표, key:렌더링 되는 동안의텍스처 또는 이미지)
+
+}
 
 // 모든 프레임에서 시작
 function update() {}
