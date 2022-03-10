@@ -9,8 +9,10 @@ function preload() {
   game.scale.pageAlignHorizontally = true;
   game.scale.pageAlignVertically = true;
   game.stage.backgroundColor = '#eee';
-  game.load.image('ball', 'img/ball.png');
+  game.load.image('ball', './img/ball.png');
 }
 
-function create() {}
+function create() {
+  ball = game.add.sprite(50, 50, 'ball');
+}
 function update() {}

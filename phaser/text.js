@@ -28,14 +28,14 @@ function preload() {
   // canvas의 백그라운드 컬러값을 eee로 바꾼다
 
   game.load.image('ball', 'img/ball.png');
-  // image 로드
+  // image 로드 image(key, value)
 
 }
 
 // 로드 후 생성(한번 실행)
 function create() {
   ball = game.add.sprite(50, 50, 'ball');
-  // sprite(x좌표, y좌표, key:렌더링 되는 동안의텍스처 또는 이미지)
+  // sprite(x좌표, y좌표, preload함수의 image에서 사용한key값과 같은것을 넣는다 <key:렌더링 되는 동안의텍스처 또는 이미지>)
 
 }
 
