@@ -5,7 +5,7 @@ var game = new Phaser.Game(480, 320, Phaser.CANVAS, null, {
 var ball;
 
 function preload() {
-  game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+  game.scale.scaleMode = Phaser.ScaleManager.NO_SCALE;
   game.scale.pageAlignHorizontally = true;
   game.scale.pageAlignVertically = true;
   game.stage.backgroundColor = '#eee';
@@ -16,6 +16,8 @@ function create() {
   game.physics.startSystem(Phaser.Physics.ARCADE);
   ball = game.add.sprite(25, 25, 'ball');
   game.physics.enable(ball, Phaser.Physics.ARCADE);
+  ball.body.collideWorldBounds = true;
+  ball.body.bounce.set(1);
   ball.body.velocity.set(100, 100);
 }
 

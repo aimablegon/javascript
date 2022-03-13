@@ -43,6 +43,12 @@ function create() {
   game.physics.enable(ball, Phaser.Physics.ARCADE);
   // Arcade Physics(물리시스템)으로 공 활성화 시키기
 
+  ball.body.collideWorldBounds = true;
+  // body의 크기(캔버스의크기)를 벽으로 인식하게 한다 => 단 이것만 쓰면 벽에 두딪힌후 가장자리에서 구른다
+
+  ball.body.bounce.set(1);
+  // 가장자리에서 계속 머물지 않고 튕기게 하는 옵션
+
   ball.body.velocity.set(150, 150);
   // 공의 속도 움직임 추가(x축, y축) => 한번 움직일때 x축으로 150, y축으로 150
   // 위의 코드 사용시 => update()의 ball.x, ball.y 삭제
