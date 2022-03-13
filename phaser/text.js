@@ -34,15 +34,24 @@ function preload() {
 
 // 로드 후 생성(한번 실행)
 function create() {
+  game.physics.startSystem(Phaser.Physics.ARCADE);
+  // Arcade Physics(물리시스템) 초기화 시키기
+
   ball = game.add.sprite(50, 50, 'ball');
   // sprite(x좌표, y좌표, preload함수의 image에서 사용한key값과 같은것을 넣는다 <key:렌더링 되는 동안의텍스처 또는 이미지>)
+  
+  game.physics.enable(ball, Phaser.Physics.ARCADE);
+  // Arcade Physics(물리시스템)으로 공 활성화 시키기
 
+  ball.body.velocity.set(150, 150);
+  // 공의 속도 움직임 추가(x축, y축) => 한번 움직일때 x축으로 150, y축으로 150
+  // 위의 코드 사용시 => update()의 ball.x, ball.y 삭제
 }
 
 // 모든 프레임에서 시작
 function update() {
-  ball.x += 1;
-  // ball의 x 값에 1씩 추가 한다
-  ball.y += 1;
-  // ball의 y 값에 1씩 추가 한다
+  // ball.x += 1;
+  // // ball의 x 값에 1씩 추가 한다
+  // ball.y += 1;
+  // // ball의 y 값에 1씩 추가 한다
 }
