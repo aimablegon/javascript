@@ -16,9 +16,9 @@ function create() {
   game.physics.startSystem(Phaser.Physics.ARCADE);
   ball = game.add.sprite(25, 25, 'ball');
   game.physics.enable(ball, Phaser.Physics.ARCADE);
+  ball.body.velocity.set(100, 100);
   ball.body.collideWorldBounds = true;
   ball.body.bounce.set(1);
-  ball.body.velocity.set(100, 100);
 }
 
 function update() {
