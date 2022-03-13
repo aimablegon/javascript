@@ -41,10 +41,12 @@ function create() {
   game.physics.startSystem(Phaser.Physics.ARCADE);
   // Arcade Physics(물리시스템) 초기화 시키기
 
+  game.physics.arcade.checkCollision.down = false;
+  // 화면의 하단 가장자리와 공의 충돌을 비활성화
+
   // ball = game.add.sprite(50, 50, 'ball');
   // sprite(x좌표, y좌표, preload함수의 image에서 사용한key값과 같은것을 넣는다 <key:렌더링 되는 동안의텍스처 또는 이미지>)
   // x좌표: 50px, y좌표:50px에서 시작하는 'ball' 이라는 키워드을 ball변수에 담는다
-
   ball = game.add.sprite(game.world.width*0.5, game.world.height-25, 'ball');
   // x좌표: game.world(게임의 캔버스 전체 widht)*0.5 = 480*0.5 = 240
   // x좌표: game.world(게임의 캔버스 젙체 height)- 25 = 320 - 5 = 295
@@ -68,6 +70,18 @@ function create() {
   ball.body.bounce.set(1);
   // 가장자리에서 계속 머물지 않고 튕기게 하는 옵션
 
+  ball.checkWorldBounds = true;
+  // 
+  ball.events.onOutOfBounds.add(function(){
+    // ball에 onOutOfBounds 이벤트 추가 
+    // onOutOfBounds => 영역 벗어났을때
+      alert('Game over!');
+      // 게임오버 
+      location.reload();
+      // 재실행
+  }, this)
+
+
 
   paddle = game.add.sprite(game.world.width*0.5, game.world.height-5, 'paddle');
   // 캔버스의 크기가 480,320일 경우
@@ -86,6 +100,7 @@ function create() {
 
   paddle.body.immovable = true;
   // paddle을 immovable(움직이지 않겠다는) 옵션
+  
 }
 
 // 모든 프레임에서 시작
