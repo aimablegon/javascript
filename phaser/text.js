@@ -40,4 +40,9 @@ function create() {
 }
 
 // 모든 프레임에서 시작
-function update() {}
+function update() {
+  ball.x += 1;
+  // ball의 x 값에 1씩 추가 한다
+  ball.y += 1;
+  // ball의 y 값에 1씩 추가 한다
+}
