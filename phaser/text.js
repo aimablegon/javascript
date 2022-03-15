@@ -71,7 +71,8 @@ function create() {
   // 가장자리에서 계속 머물지 않고 튕기게 하는 옵션
 
   ball.checkWorldBounds = true;
-  // 
+  // onOutOfBounds 이벤트를 실행하기 위해 필요한 필수 옵션
+  
   ball.events.onOutOfBounds.add(function(){
     // ball에 onOutOfBounds 이벤트 추가 
     // onOutOfBounds => 영역 벗어났을때
