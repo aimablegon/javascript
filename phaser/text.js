@@ -14,6 +14,9 @@ var bricks; // bricks(벽돌) 변수 선언 => 그룹을 생성
 var newBrick; // newBrick(새로운 벽돌) 변수 선언 => 반복문이 돌때마다 그룹에 추가되는 새 객체
 var brickInfo; // brickInfo(벽돌정보) 변수 선언 => 벽돌의 모든 데이터
 
+var scoreText; // scoreText(스코어 단어) 변수 선언
+var score = 0; // score(스코어) 스코어 변수 선언
+
 // 시작전 로드
 function preload() {
   // scale => canvas의 화면 크기 조절
@@ -111,7 +114,9 @@ function create() {
 
   initBricks();
   // initBricks 함수 호축
-  
+
+  scoreText = game.add.text(5, 5, 'Points: 0', { font: '18px Arial', fill: '#0095DD' });
+  // text(위치할x좌표, 위치할y좌표, 쓰고싶은text, {fontinfo1, fontinfo2})
 }
 
 // 모든 프레임에서 시작
@@ -198,5 +203,8 @@ function ballHitBrick(ball, brick) {
   // 공과 벽돌의 충돌관련 함수
   brick.kill();
   // 벽돌이 죽는다 => 벽돌이 사라진다
-  
+  score += 10;
+  // score에 10씩 추가
+  scoreText.setText('Points: '+score);
+  // scoreText을 Points: score변수의 값으로 재설정
 }
