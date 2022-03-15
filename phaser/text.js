@@ -125,6 +125,11 @@ function update() {
   // collide는 충돌감지 함수
   // ball과 paddle의 충돌 간지를 알고 싶을 때 사용
 
+  game.physics.arcade.collide(ball, bricks, ballHitBrick);
+  // collide는 충돌감지 함수
+  // ball과 bricks의 충돌 간지를 알고 싶을 때 사용
+  // ballHitBrick 매개변수 => 충돌이 발생할 때 실행되는 함수
+
   // paddle.x = game.input.x;
   // input으로 마우스, 터치 옵션을 받을 수 있다
   // input의 x 값을 paddle의 x값에 담는다
@@ -187,4 +192,11 @@ function initBricks() {
       // 벽돌 생성
     }
   }
+}
+
+function ballHitBrick(ball, brick) {
+  // 공과 벽돌의 충돌관련 함수
+  brick.kill();
+  // 벽돌이 죽는다 => 벽돌이 사라진다
+  
 }
